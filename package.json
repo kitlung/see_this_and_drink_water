@@ -1,0 +1,18 @@
+{
+  "name": "stay-hydrated",
+  "version": "1.0.0",
+  "description": "A discord bot that reminds you to drink water.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "repository": "https://github.com/kitlung/see_this_and_drink_water.git",
+  "author": "Kit Lung",
+  "license": "MIT",
+  "dependencies": {
+    "discord.js": "^12.2.0",
+    "dotenv": "^8.2.0",
+    "moment": "^2.27.0"
+  }
+}
