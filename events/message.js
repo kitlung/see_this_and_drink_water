@@ -1,4 +1,4 @@
-const moment = require("moment");
+const moment = require("moment-timezone");
 const config = require("../config");
 const { removeReminder } = require("../utils");
 
@@ -43,10 +43,17 @@ const hydrated = (message, content) => {
     const toHour = to.substring(0, to.length - 2).replace(":", "");
     const toMinute = to.substring(to.length - 2);
 
-    const end = moment().set({
-      hour: parseInt(toHour),
-      minute: parseInt(toMinute),
-    });
+    const end = moment()
+      .set({
+        hour: parseInt(toHour),
+        minute: parseInt(toMinute),
+      })
+      .tz("Asia/Hong_Kong");
+
+    if (moment().isSameOrAfter(end)) {
+      message.reply("Invalid time.");
+      return;
+    }
 
     message.reply("Ready to get wet?", { tts: true });
     const interval = setInterval(() => {
@@ -68,6 +75,7 @@ const hydrated = (message, content) => {
       "Invalid format. Example: ```form 09:00 to 10:00 every 10 minutes```"
     );
   }
+  return;
 };
 
 const stop = (message) => {
