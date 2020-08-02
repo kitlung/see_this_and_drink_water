@@ -13,7 +13,7 @@ module.exports = async (client, message) => {
 
   // let voiceConnection;
   if (content.includes(`${prefix}hydrated`)) {
-    hydrated({ ...message, content: content.replace(`${prefix}hydrated`, "") });
+    hydrated(message, content.replace(`${prefix}hydrated`, ""));
   } else if (content.includes(`${prefix}stop`)) {
     stop(message);
   }
@@ -28,32 +28,46 @@ module.exports = async (client, message) => {
   // }
 };
 
-const hydrated = (message) => {
-  const { content, channel, author } = message;
-  const timeWithColon = "(([0-1]?[0-9]|2[0-3]):[0-5][0-9])";
-  const timeWithoutColon = "(([0-1]?[0-9]|2[0-3])[0-5][0-9])";
+const hydrated = (message, content) => {
+  const { channel, author } = message;
+  const timeRegex = "(([0-1]?[0-9]|2[0-3]):?[0-5][0-9])";
   const regex = new RegExp(
-    `from (?<from>now|${timeWithColon}|${timeWithoutColon}) to (?<to>${timeWithColon}|${timeWithoutColon}) every (?<minute>[0-9]+) (minute|minutes|min)`
+    `to (?<to>${timeRegex}) every (?<minute>([0-9]+.)?[0-9]+) (minute|minutes|min)`
   );
   const text = content.match(regex);
-  console.log("==== text", text);
-  const end = moment().add("10", "seconds");
-  message.reply("Ready to get wet?", { tts: true });
 
-  // const interval = setInterval(() => {
-  //   if (moment().isSameOrBefore(end)) {
-  //     channel.send(
-  //       `See This Drink Water. ${moment().format("HH:mm:ss")} / ${end.format(
-  //         "HH:mm:ss"
-  //       )}`
-  //     );
-  //   } else {
-  //     message.reply("You need to pee. See you next time.");
-  //     removeReminder(intervals, author.id);
-  //   }
-  // }, 2000);
+  if (text && text.groups && text.groups.to && text.groups.minute) {
+    let to = text.groups.to;
+    let minute = text.groups.minute;
 
-  // intervals[author.id] = interval;
+    const toHour = to.substring(0, to.length - 2).replace(":", "");
+    const toMinute = to.substring(to.length - 2);
+
+    const end = moment().set({
+      hour: parseInt(toHour),
+      minute: parseInt(toMinute),
+    });
+
+    message.reply("Ready to get wet?", { tts: true });
+    const interval = setInterval(() => {
+      if (moment().isSameOrBefore(end)) {
+        channel.send(
+          `See This Drink Water. ${moment().format("HH:mm:ss")} / ${end.format(
+            "HH:mm:ss"
+          )}`
+        );
+      } else {
+        message.reply("You need to pee. See you next time.");
+        removeReminder(intervals, author.id);
+      }
+    }, 1000 * 60 * minute);
+
+    intervals[author.id] = interval;
+  } else {
+    message.reply(
+      "Invalid format. Example: ```form 09:00 to 10:00 every 10 minutes```"
+    );
+  }
 };
 
 const stop = (message) => {
