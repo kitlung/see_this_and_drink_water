@@ -58,10 +58,10 @@ const hydrated = (message, content) => {
     message.reply("Ready to get wet?", { tts: true });
     const interval = setInterval(() => {
       if (moment().tz("Asia/Hong_Kong").isSameOrBefore(end)) {
-        channel.send(
-          `See This Drink Water. ${moment().format("HH:mm:ss")} / ${end.format(
-            "HH:mm:ss"
-          )}`
+        message.reply(
+          `See This Drink Water. ${moment()
+            .tz("Asia/Hong_Kong")
+            .format("HH:mm:ss")} / ${end.format("HH:mm:ss")}`
         );
       } else {
         message.reply("You need to pee. See you next time.");
