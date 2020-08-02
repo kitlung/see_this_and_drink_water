@@ -32,7 +32,7 @@ const hydrated = (message, content) => {
   const { channel, author } = message;
   const timeRegex = "(([0-1]?[0-9]|2[0-3]):?[0-5][0-9])";
   const regex = new RegExp(
-    `to (?<to>${timeRegex}) every (?<minute>([0-9]+.)?[0-9]+) (minute|minutes|min)`
+    `till (?<to>${timeRegex}) every (?<minute>([0-9]+.)?[0-9]+) (minute|minutes|min)`
   );
   const text = content.match(regex);
 
@@ -71,9 +71,7 @@ const hydrated = (message, content) => {
 
     intervals[author.id] = interval;
   } else {
-    message.reply(
-      "Invalid format. Example: ```form 09:00 to 10:00 every 10 minutes```"
-    );
+    message.reply("Invalid format. Example: ```till 10:00 every 10 minutes```");
   }
   return;
 };
