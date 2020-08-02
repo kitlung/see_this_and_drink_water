@@ -44,11 +44,11 @@ const hydrated = (message, content) => {
     const toMinute = to.substring(to.length - 2);
 
     const end = moment()
+      .tz("Asia/Hong_Kong")
       .set({
         hour: parseInt(toHour),
         minute: parseInt(toMinute),
-      })
-      .tz("Asia/Hong_Kong");
+      });
 
     if (moment().isSameOrAfter(end)) {
       message.reply("Invalid time.");
@@ -57,7 +57,7 @@ const hydrated = (message, content) => {
 
     message.reply("Ready to get wet?", { tts: true });
     const interval = setInterval(() => {
-      if (moment().isSameOrBefore(end)) {
+      if (moment().tz("Asia/Hong_Kong").isSameOrBefore(end)) {
         channel.send(
           `See This Drink Water. ${moment().format("HH:mm:ss")} / ${end.format(
             "HH:mm:ss"
