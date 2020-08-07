@@ -43,6 +43,8 @@ const hydrated = (message, content) => {
     const toHour = to.substring(0, to.length - 2).replace(":", "");
     const toMinute = to.substring(to.length - 2);
 
+    const currentTime = moment().tz("Asia/Hong_Kong");
+
     const end = moment()
       .tz("Asia/Hong_Kong")
       .set({
@@ -50,21 +52,24 @@ const hydrated = (message, content) => {
         minute: parseInt(toMinute),
       });
 
-    if (moment().isSameOrAfter(end)) {
+    const maxMinute = moment.duration(end.diff(currentTime)).asMinutes();
+
+    if (currentTime.isSameOrAfter(end) || minute > maxMinute) {
       message.reply("Invalid time.");
       return;
     }
 
     message.reply("Ready to get wet?", { tts: true });
     const interval = setInterval(() => {
-      if (moment().tz("Asia/Hong_Kong").isSameOrBefore(end)) {
+      if (currentTime.isSameOrBefore(end)) {
         message.reply(
           `See This Drink Water. ${moment()
             .tz("Asia/Hong_Kong")
-            .format("HH:mm:ss")} / ${end.format("HH:mm:ss")}`
+            .format("HH:mm:ss")} / ${end.format("HH:mm:ss")}`,
+          { tts: true }
         );
       } else {
-        message.reply("You need to pee. See you next time.");
+        message.reply("You need to pee. See you next time.", { tts: true });
         removeReminder(intervals, author.id);
       }
     }, 1000 * 60 * minute);
