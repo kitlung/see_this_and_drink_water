@@ -61,7 +61,7 @@ const hydrated = (message, content) => {
 
     message.reply("Ready to get wet?", { tts: true });
     const interval = setInterval(() => {
-      if (currentTime.isSameOrBefore(end)) {
+      if (moment().isSameOrBefore(end)) {
         message.reply(
           `See This Drink Water. ${moment()
             .tz("Asia/Hong_Kong")
